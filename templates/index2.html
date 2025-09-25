@@ -1,0 +1,34 @@
+{%- block head %}
+    {% block page_title %}Home{% endblock page_title %}
+    {%- block styles %}
+        {{ bootstrap.load_css() }}
+    {%- endblock styles %}
+
+{% endblock head %}
+
+{% block navbar %}
+
+<!-- Navigation bar -->
+<nav >
+    <div class="container-fluid">
+        <div class="navbar-header">
+        <a class="" href="#">My App</a>
+        </div>
+        
+</nav>
+{% endblock navbar %}
+
+
+
+{% block content %}
+<img src="static\fav_icon.png" class="rounded float-start" alt="..." width="100" height="100">
+
+<p class="text-center">Center aligned text on all viewport sizes.</p>
+
+
+<h2>Welcome to the home page!</h2>
+
+{% endblock %}
+
+{{ bootstrap.load_js() }}
+
