@@ -118,6 +118,7 @@ def create_post():
             'image_id': image_id,
             'caption': form.caption.data,
             'author_email': current_user.get_id(),
+            'likes': [],
         }
         collection_posts.insert_one(post)
         flash('Post created successfully!', category='success')
@@ -159,6 +160,25 @@ def edit_post(post_id):
         return redirect(url_for('profile'))
     return render_template('create_post.html', form=form)
 
+@app.route('/like/<post_id>', methods=['POST'])
+@login_required
+def like_post(post_id):
+    user_email = current_user.get_id()
+    post = collection_posts.find_one({"_id": ObjectId(post_id)})
+
+    if user_email in post.get('likes', []):      #unlike
+        collection_posts.update_one(
+            {"_id": ObjectId(post_id)},
+            {"$pull": {"likes": user_email}}
+        )
+        flash('Post unliked', 'info')
+    else:                                        #like
+        collection_posts.update_one(
+            {"_id": ObjectId(post_id)},
+            {"$addToSet": {"likes": user_email}}
+        )
+        flash('Post liked!', 'success')
+    return redirect(url_for('index'))
 
 
 

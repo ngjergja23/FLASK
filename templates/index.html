@@ -28,14 +28,21 @@
             </div>
 			{% endif %}
 
-			<!-- likes -->
 			<div class="mb-3">
-				<button class="btn btn-outline-primary btn-sm me-2">
-					<i class="bi bi-heart"></i> Like
-				</button>
-				<button class="btn btn-outline-primary btn-sm me-2">
+				<form method="POST" action="{{ url_for('like_post', post_id=post['_id']) }}" style="display: inline;">
+					{% if current_user.get_id() in post.get('likes', []) %}
+					<button type="submit" class="btn btn-primary btn-sm me-2">
+						<i class="bi bi-heart-fill me-2"></i>Unlike ({{ post.get('likes', [])|length }})
+					</button>
+					{% else %}
+					<button type="submit" class="btn btn-outline-primary btn-sm me-2">
+						<i class="bi bi-heart"></i> Like ({{ post.get('likes', [])|length }})
+					</button>
+					{% endif %}
+				</form>
+				<!-- <button class="btn btn-outline-primary btn-sm me-2">
     				<i class="bi bi-chat"></i> Comment
-				</button>
+				</button> -->
 			</div>
 			<div>
 				<p class="mb-2">{{ post.caption }}</p>
