@@ -14,7 +14,7 @@ app = Flask(__name__)
 bootstrap = Bootstrap5(app) 
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
-app.config['MONGO_URI'] = os.getenv('MONGO_URI')
+#app.config['MONGO_URI'] = os.getenv('MONGO_URI')
 
 #client = MongoClient(app.config['MONGO_URI'])
 #client = MongoClient('mongodb://localhost:27017/')
