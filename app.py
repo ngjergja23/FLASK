@@ -19,8 +19,8 @@ app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI')
 app.config['DEBUG'] = os.getenv('DEBUG')
 
-#client = MongoClient(app.config['MONGO_URI'])
-client = MongoClient('mongodb://localhost:27017/')
+client = MongoClient(app.config['MONGO_URI'])
+#client = MongoClient('mongodb://localhost:27017/')
 #client = MongoClient(os.getenv('MONGODB_CONNECTION_STRING'))
 db = client['mojadb']  
 collection_users = db['mojikorisnici'] 
