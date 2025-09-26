@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% from 'bootstrap5/form.html' import render_form %}
+
+{% block title %}Create Post{% endblock title%}
+
+{% block head %}
+    {{ super() }}
+
+{% endblock head %}
+
+{% block body %}
+{{ render_form(form) }}
+{% endblock body %}
+
+{% block scripts %}
+    {{ super() }}
+
+{% endblock scripts %}

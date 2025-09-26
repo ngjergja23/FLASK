@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, BooleanField, TextAreaField
+from wtforms import StringField, PasswordField, SubmitField, BooleanField, FileField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length, EqualTo
+from flask_wtf.file import FileAllowed
 
 
 
@@ -16,3 +17,7 @@ class LoginForm(FlaskForm):
     remember_me = BooleanField('Remember Me')
     submit = SubmitField('Login')
 
+class PostForm(FlaskForm):
+    image = FileField('Image', validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
+    caption = TextAreaField('Caption', validators=[Length(max=1000)])
+    submit = SubmitField('Post')

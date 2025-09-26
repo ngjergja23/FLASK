@@ -34,6 +34,9 @@
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav"> 
                     {{ render_nav_item('index', 'Home', _use_li = True) }}
+                    {% if current_user.is_authenticated %}
+                    {{ render_nav_item('create_post', 'Create Post', _use_li = True) }}
+                    {% endif %}
                 </ul>
 
                 <ul class="navbar-nav ms-auto">
@@ -66,13 +69,11 @@
 
         {% block body %}
         
-        {% block scripts %}
-            {{ bootstrap.load_js() }}
-        {% endblock scripts %}
+    
 
         {% endblock body%}
 
-        <footer class="d-flex fixed-bottom flex-wrap justify-content-between align-items-center py-2 mt-auto border-top">
+        <footer class="d-flex flex-wrap justify-content-between align-items-center py-2 mt-5 border-top">
             <p class="col-md-6 mb-0 text-body-secondary">&copy;2024 My Flask App.</p>
 
             <ul" class="nav">
@@ -81,9 +82,10 @@
             </ul>
         </footer>
 
-        
-
     </div>
+    {% block scripts %}
+        {{ bootstrap.load_js() }}
+    {% endblock scripts %}
     
 </body>
 </html>

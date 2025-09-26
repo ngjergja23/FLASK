@@ -7,6 +7,8 @@ from pymongo import MongoClient
 from forms import *
 from flask_bootstrap import Bootstrap5
 from datetime import datetime
+import gridfs
+from bson.objectid import ObjectId
 
 load_dotenv()  # Load environment variables from .env file
 
@@ -15,12 +17,15 @@ bootstrap = Bootstrap5(app)
 
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
 app.config['MONGO_URI'] = os.getenv('MONGO_URI')
+app.config['DEBUG'] = os.getenv('DEBUG')
 
-client = MongoClient(app.config['MONGO_URI'])
-#client = MongoClient('mongodb://localhost:27017/')
+#client = MongoClient(app.config['MONGO_URI'])
+client = MongoClient('mongodb://localhost:27017/')
 #client = MongoClient(os.getenv('MONGODB_CONNECTION_STRING'))
 db = client['mojadb']  
 collection_users = db['mojikorisnici'] 
+collection_posts = db['mojipostovi']
+fs = gridfs.GridFS(db)
 
 
 login_manager = LoginManager() # central object that handles authentication
@@ -103,13 +108,28 @@ def logout():
 #     # Placeholder for profile page
 #     return render_template('profile.html') if os.path.exists('templates/profile.html') else render_template('index.html')
 
-     
-
+@app.route('/create_post', methods=['GET', 'POST'])
+@login_required 
+def create_post():
+    form = PostForm()
+    if form.validate_on_submit():
+        image_id = save_image_to_gridfs(request, fs)
+        post = {
+            'image_id': image_id,
+            'caption': form.caption.data,
+            'author_email': current_user.get_id(),
+        }
+        collection_posts.insert_one(post)
+        flash('Post created successfully!', category='success')
+        return redirect(url_for('index'))
+    
+    return render_template('create_post.html', form=form)
 
 
 @app.route('/')
 def index():
-    return render_template('index.html')
+    posts = collection_posts.find().sort('_id', -1)  # Fetch posts from the database, sorted by newest first
+    return render_template('index.html', posts=posts)
 
 @app.errorhandler(404)
 def page_not_found(e):
@@ -118,3 +138,20 @@ def page_not_found(e):
 @app.errorhandler(500)
 def internal_server_error(e):
 	return render_template('500.html'), 500
+
+def save_image_to_gridfs(request, fs):
+    if 'image' in request.files:
+        image = request.files['image']
+        if image.filename != '':
+            # Save the file to GridFS
+            image_id = fs.put(image, filename=image.filename)
+        else:
+            image_id = None
+    else:
+        image_id = None
+    return image_id
+
+@app.route('/image/<image_id>')
+def get_image_from_gridfs(image_id):
+    image = fs.get(ObjectId(image_id))
+    return image.read(), 200, {'Content-Type': 'image/jpeg'}

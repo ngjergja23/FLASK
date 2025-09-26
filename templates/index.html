@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% from 'bootstrap5/utils.html' import render_icon %}
 
 {% block title %}Home{% endblock title%}
 
@@ -9,7 +10,49 @@
 {% endblock head%}
 
 {% block body %}
-<h1>Welcome to my Flask app!</h1>
+<h1 class="mb-4">Welcome to my Flask app!</h1>
+
+<div class="col-8">
+	{% for post in posts %}
+		<article class="border-bottom py-4">
+
+			<div class="d-flex align-items-center mb-3">
+                <strong>{{ post.author_email }}</strong>
+            </div>
+
+			{% if post.image_id %}
+			<div class="mb-3">
+                <img src="{{ url_for('get_image_from_gridfs', image_id=post.image_id) }}" 
+                     class="img-fluid rounded" 
+                     style="max-height: 500px; object-fit: cover;" 
+                     alt="Post Image">
+            </div>
+			{% endif %}
+
+			<!-- likes -->
+			<div class="mb-3">
+				<button class="btn btn-outline-primary btn-sm me-2">
+					<i class="bi bi-heart"></i> Like
+				</button>
+				<button class="btn btn-outline-primary btn-sm me-2">
+    				<i class="bi bi-chat"></i> Comment
+				</button>
+			</div>
+			<div>
+				<p class="mb-2">{{ post.caption }}</p>
+			</div>
+		</div>
+
+		</article>
+	{% endfor %}
+</div>
+
+
+
+{% endblock body %}
+
+{% block scripts %}
+
 
 
 {{ super() }}
