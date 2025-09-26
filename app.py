@@ -102,11 +102,11 @@ def logout():
     flash('You have been logged out.', category='info')
     return redirect(url_for('index'))
 
-# @app.route('/profile')
-# @login_required
-# def profile():
-#     # Placeholder for profile page
-#     return render_template('profile.html') if os.path.exists('templates/profile.html') else render_template('index.html')
+@app.route('/profile')
+@login_required
+def profile():
+    posts = collection_posts.find({'author_email': current_user.get_id()}).sort('_id', -1)
+    return render_template('profile.html', posts=posts)
 
 @app.route('/create_post', methods=['GET', 'POST'])
 @login_required 
@@ -126,10 +126,47 @@ def create_post():
     return render_template('create_post.html', form=form)
 
 
+@app.route('/delete/<post_id>', methods=['POST'])
+@login_required
+def delete_post(post_id):
+    collection_posts.delete_one({"_id": ObjectId(post_id)})
+    flash('Post deleted successfully!', 'success')
+    return redirect(url_for('profile'))
+
+@app.route('/edit/<post_id>', methods=['GET', 'POST'])
+@login_required
+def edit_post(post_id):
+    form = PostForm()
+    post = collection_posts.find_one({"_id": ObjectId(post_id)})
+
+    if request.method == 'GET':
+        #form.image =
+        form.caption.data = post['caption']
+    
+    elif form.validate_on_submit():
+        update_data = {
+            'caption': form.caption.data,
+        }
+        new_image_id = save_image_to_gridfs(request, fs)
+        if new_image_id is not None:
+            update_data['image_id'] = new_image_id 
+
+        collection_posts.update_one(
+            {"_id": ObjectId(post_id)},
+            {"$set": update_data}
+        )       
+        flash('Post updated successfully!', category='success')
+        return redirect(url_for('profile'))
+    return render_template('create_post.html', form=form)
+
+
+
+
 @app.route('/')
 def index():
     posts = collection_posts.find().sort('_id', -1)  # Fetch posts from the database, sorted by newest first
     return render_template('index.html', posts=posts)
+
 
 @app.errorhandler(404)
 def page_not_found(e):
