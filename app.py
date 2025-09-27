@@ -62,7 +62,7 @@ def register():
 
         if existing_user:
             flash('User already exists! Please log in.', category='warning')
-            return redirect(url_for('register'))
+            return redirect(url_for('login'))
         
         hashed_password = generate_password_hash(password, method='pbkdf2:sha256')
         collection_users.insert_one({
