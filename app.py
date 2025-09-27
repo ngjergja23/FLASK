@@ -182,7 +182,7 @@ def like_post(post_id):
 
 
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
     posts = collection_posts.find().sort('_id', -1)  # Fetch posts from the database, sorted by newest first
     return render_template('index.html', posts=posts)
