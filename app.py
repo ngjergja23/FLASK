@@ -160,7 +160,7 @@ def edit_post(post_id):
         return redirect(url_for('profile'))
     return render_template('create_post.html', form=form)
 
-@app.route('/like/<post_id>', methods=['POST'])
+@app.route('/like/<post_id>', methods=['GET', 'POST'])
 @login_required
 def like_post(post_id):
     user_email = current_user.get_id()
